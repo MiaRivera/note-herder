@@ -10,8 +10,8 @@ class App extends Component {
     this.state = {
       notes: {
         'note-1': {
-          id: 'note',
-          title: 'my note',
+          id: 'change',
+          title: 'the change',
           body: 'this is my',
         },
         'note-2': {
