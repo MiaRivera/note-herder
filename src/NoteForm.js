@@ -16,10 +16,14 @@ class NoteForm extends React.Component {
                 type="text"
                 name="title"
                 placeholder="Title your note"
+                value={this.props.currentNote.title}
               />
             </p>
             
-            <textarea name="body"></textarea>
+            <textarea 
+              name="body"
+              value={this.props.currentNote.body}>
+            </textarea>
           </form>
         </div>
         )

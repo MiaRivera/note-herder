@@ -8,6 +8,12 @@ class App extends Component {
     super()
 
     this.state = {
+      currentNote: {
+        id: null,
+        title: '',
+        body: '',
+      },
+
       notes: {
         'note-1': {
           id: 'change',
@@ -22,16 +28,19 @@ class App extends Component {
         }
       } 
   }
-  
-  handleClick(ev) {
-    console.log("test")
 
+  setCurrentNote = (note) => {
+    this.setState({currentNote: note})
   }
 
   render() {
     return (
       <div className="App">
-        <Main notes={this.state.notes} click={this.handleClick} />
+        <Main 
+          notes={this.state.notes} 
+          currentNote={this.state.currentNote} 
+          setCurrentNote={this.setCurrentNote.bind(this)}
+        />
       </div>
     )
   }
