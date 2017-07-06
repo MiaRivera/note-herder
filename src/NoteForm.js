@@ -16,7 +16,7 @@ class NoteForm extends React.Component {
     return (
       <div className="NoteForm">
         <div className="form-actions">
-          <button type="button">
+          <button type="button" onClick={this.props.deleteNote}>
             <i className="fa fa-trash-o"></i>
           </button>
         </div>
