@@ -46,6 +46,7 @@ class App extends Component {
 
     this.resetCurrentNote()
     delete notes[note.id]
+    this.setState({ notes })
   }
 
   render() {
