@@ -3,7 +3,9 @@ import './NoteForm.css'
 
 class NoteForm extends React.Component {
     render() {
-        return (
+      const {currentNote} = this.props
+
+      return (
         <div className="NoteForm">
           <div className="form-actions">
             <button type="button">
@@ -16,7 +18,7 @@ class NoteForm extends React.Component {
                 type="text"
                 name="title"
                 placeholder="Title your note"
-                value={this.props.currentNote.title}
+                value={currentNote.title}
               />
             </p>
             
@@ -26,7 +28,7 @@ class NoteForm extends React.Component {
             </textarea>
           </form>
         </div>
-        )
+      )
     }
 }
 
