@@ -16,9 +16,24 @@ class App extends Component {
       } 
   }
 
-  componentDidMount = () => {
-    base.syncState(
-      'notes',
+  componentWillMount = () => {
+    auth.onAuthStateChanged(
+      (user) => {
+        if (user) {
+          //signed in
+          this.handleAuth(user)
+        } else {
+          //signedout
+          this.setState({uid: null})
+          this.handleUnauth()
+        }
+      }
+    )
+  }
+
+  syncNotes = () => {
+    this.bindingRef = base.syncState(
+      'notes/${this.state.uid}',
       {
         context: this,
         state: 'notes',
@@ -68,6 +83,19 @@ class App extends Component {
 
   handleAuth = (result) => {
     this.setState({uid: result.user.uid})
+  }
+
+  handleUnauth = () => {
+    if(this.bindingRef) {
+      base.removeBinding(this.bindingRef)
+    }
+
+    this.setState({
+      uid: null,
+      notes: {},
+    })
+
+    this.resetCurrentNote()
   }
 
   signOut = () => {
