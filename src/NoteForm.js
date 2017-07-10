@@ -1,18 +1,56 @@
 import React from 'react'
+import RichTextEditor from 'react-rte'
+
 import './NoteForm.css'
 
-class NoteForm extends React.Component {
+class NoteForm extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      note: this.blankNote(),
+      editorValue: RichTextEditor.createEmptyValue(),
+    }
+  }
+
+  componentWillRecieveProps = (nextProps) => {
+    const nextId = nextProps.currentNoteId
+    const note = nextProps.notes[nextId] || this.blankNote()
+
+    let editorValue = this.state.editorValue
+    if(editorValue.toString('html') !== note.body) {
+      editorValue = RichTextEditor.createValueFromString(note.body, 'html')
+    }
+
+    this.setState({note, editorValue})
+  }
+
+  blankNote = () => {
+    return {
+      id: null,
+      title: '',
+      body: '',
+    }
+  }
 
   handleChanges = (ev) => {
-    const note = {...this.props.currentNote}
+    const note = {...this.state.note}
     note[ev.target.name] = ev.target.value
+    this.setState(
+      {note},
+      () => this.props.saveNote(note)
+    )
+  }
 
-    this.props.saveNote(note)
+  handleEditorChanges = (editorValue) => {
+    const note = {...this.state.note}
+    note.body = editorValue.toString('html')
+    this.setState(
+      {note, editorValue},
+      () => this.props.saveNote(note)
+    )
   }
 
   render() {
-    const {currentNote} = this.props
-
     return (
       <div className="NoteForm">
         <div className="form-actions">
@@ -26,17 +64,17 @@ class NoteForm extends React.Component {
               type="text"
               name="title"
               placeholder="Title your note"
-              value={currentNote.title}
+              value={this.state.note.title}
               onChange={this.handleChanges}
             />
           </p>
               
-          <textarea 
+          <RichTextEditor 
             name="body"
-            value={this.props.currentNote.body}
-            onChange={this.handleChanges}
+            value={this.state.editorValue}
+            onChange={this.handleEditorChanges}
           >
-          </textarea>
+          </RichTextEditor>
         </form>
       </div>
     )
