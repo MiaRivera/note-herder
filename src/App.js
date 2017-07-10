@@ -3,14 +3,15 @@ import base from './base'
 
 import './App.css'
 import Main from './Main'
+import SignIn from './SignIn'
 
 class App extends Component {
   constructor() {
     super()
 
     this.state = {
+      uid: null,
       currentNote: this.blankNote,
-      
       notes: {}
       } 
   }
@@ -61,6 +62,14 @@ class App extends Component {
     this.resetCurrentNote()
   }
 
+  signedIn = () => {
+    return this.state.uid
+  }
+
+  handleAuth = () => {
+    this.setState({uid: 'mrivera'})
+  }
+
   render() {
     const actions = {
       setCurrentNote: this.setCurrentNote,
@@ -70,11 +79,12 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <Main 
-          notes={this.state.notes} 
-          currentNote={this.state.currentNote} 
-          {...actions}
-        />
+
+        {this.signedIn() ? 
+          <Main notes={this.state.notes} currentNote={this.state.currentNote} {...actions} /> :
+          <SignIn handleAuth={this.handleAuth} />
+        }
+        
       </div>
     )
   }
