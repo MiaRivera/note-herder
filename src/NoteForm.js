@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import RichTextEditor from 'react-rte'
 
 import './NoteForm.css'
