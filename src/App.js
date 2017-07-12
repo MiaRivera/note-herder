@@ -55,7 +55,8 @@ class App extends Component {
       note.id = Date.now()
       shouldRedirect = true
     }
-
+    note.updatedAt = Date.now()
+    
     const notes = {...this.state.notes}
     notes[note.id] = note
 

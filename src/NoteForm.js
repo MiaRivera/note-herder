@@ -32,6 +32,7 @@ class NoteForm extends Component {
   blankNote = () => {
     return {
       id: null,
+      updatedAt: null,
       title: '',
       body: '',
     }
