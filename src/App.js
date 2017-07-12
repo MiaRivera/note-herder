@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {Route, Switch, Redirect} from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 
 import './App.css'
-import base, {auth} from './base'
+import base, { auth } from './base'
 import Main from './Main'
 import SignIn from './SignIn'
 
@@ -11,10 +11,10 @@ class App extends Component {
     super()
 
     this.state = {
+      notes:  {},
       uid: null,
-      currentNoteId: null,
-      notes: {}
-      } 
+      firebaseNotesSynced: false,
+    }
   }
 
   componentWillMount = () => {
@@ -22,10 +22,10 @@ class App extends Component {
     auth.onAuthStateChanged(
       (user) => {
         if (user) {
-          //signed in
+          // signed in
           this.handleAuth(user)
         } else {
-          //signedout
+          // signed out
           this.handleUnauth()
         }
       }
@@ -34,52 +34,44 @@ class App extends Component {
 
   getUserFromLocalStorage = () => {
     const uid = localStorage.getItem('uid')
-    if(!uid) return
-    this.setState({uid})
+    if (!uid) return
+    this.setState({ uid })
   }
 
   syncNotes = () => {
     this.bindingRef = base.syncState(
       `notes/${this.state.uid}`,
       {
-        context: this,
-        state: 'notes',
+        context: this,  // what object the state is on
+        state: 'notes', // which property to sync
+        then: () => this.setState({ firebaseNotesSynced: true })
       }
-
     )
   }
 
-  setCurrentNote = (note) => {
-    this.setState({currentNoteId: note.id})
-  }
-
-  resetCurrentNote = () => {
-    this.setCurrentNote({id: null})
-  }
-
   saveNote = (note) => {
-    const notes = {...this.state.notes}
     let shouldRedirect = false
-
-    if(!note.id) {
+    if (!note.id) {
       note.id = Date.now()
       shouldRedirect = true
     }
+
+    const notes = {...this.state.notes}
     notes[note.id] = note
 
     this.setState({ notes })
 
-    if(shouldRedirect) {
-      this.history.push(`/notes/${note.id}`)
+    if (shouldRedirect) {
+      this.props.history.push(`/notes/${note.id}`)
     }
   }
 
-  deleteNote = (note) => {
+  removeNote = (note) => {
     const notes = {...this.state.notes}
     notes[note.id] = null
 
     this.setState({ notes })
-    this.props.history.push('/notes')
+    this.props.history.replace('/notes')
   }
 
   signedIn = () => {
@@ -88,9 +80,8 @@ class App extends Component {
 
   handleAuth = (user) => {
     localStorage.setItem('uid', user.uid)
-
     this.setState(
-      {uid: user.uid},
+      { uid: user.uid },
       this.syncNotes
     )
   }
@@ -98,7 +89,7 @@ class App extends Component {
   handleUnauth = () => {
     localStorage.removeItem('uid')
 
-    if(this.bindingRef) {
+    if (this.bindingRef) {
       base.removeBinding(this.bindingRef)
     }
 
@@ -106,8 +97,6 @@ class App extends Component {
       uid: null,
       notes: {},
     })
-
-    this.resetCurrentNote()
   }
 
   signOut = () => {
@@ -117,46 +106,42 @@ class App extends Component {
   render() {
     const actions = {
       saveNote: this.saveNote,
-      deleteNote: this.deleteNote,
-      signOut: this.signOut
+      removeNote: this.removeNote,
+      signOut: this.signOut,
     }
 
-    const noteData = {
-      notes: this.state.notes,
-      currentNoteId: this.state.currentNoteId,
-    }
-  
     return (
       <div className="App">
         <Switch>
-          <Route path="/sign-in" 
-                 render={() => (
-                    this.signedIn()
-                      ? <Redirect to="/notes" />
-                      : <SignIn />
-                  )} 
+          <Route
+            path="/sign-in"
+            render={() => (
+              this.signedIn()
+                ? <Redirect to="/notes" />
+                : <SignIn />
+            )}
           />
-
-          <Route path="/notes" 
-                 render={ () => (
-                    this.signedIn()
-                      ? <Main {...noteData} {...actions} 
-                        /> 
-                      : <Redirect to="/sign-in" /> 
-                  )} 
+          <Route
+            path="/notes"
+            render={() => (
+              this.signedIn()
+                ? <Main
+                    {...actions}
+                    notes={this.state.notes}
+                    firebaseNotesSynced={this.state.firebaseNotesSynced}
+                  />
+                : <Redirect to="/sign-in" />
+            )}
           />
-
           <Route render={() => (
             this.signedIn()
               ? <Redirect to="/notes" />
-              : <SignIn />
-            )} 
-          />
+              : <Redirect to="/sign-in" />
+          )} />
         </Switch>
       </div>
     )
   }
-
 }
 
 export default App
