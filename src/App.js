@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Route, Switch} from 'react-router-dom'
+import {Route, Switch, Redirect} from 'react-router-dom'
 
 import './App.css'
 import base, {auth} from './base'
@@ -125,8 +125,20 @@ class App extends Component {
     return (
       <div className="App">
         <Switch>
-          <Route path="/sign-in" component={SignIn} />
-          <Route path="/notes" render={ () => <Main {...noteData} {...actions} /> } />
+          <Route path="/sign-in" 
+                 render={() => (
+                    this.signedIn()
+                      ? <Redirect to="/notes" />
+                      : <SignIn />
+                  )} 
+          />
+
+          <Route path="/notes" render={ () => (
+            this.signedIn()
+              ? <Main {...noteData} {...actions} 
+                /> 
+              : <Redirect to="/sign-in" /> )} 
+          />
         </Switch>
       </div>
     )
