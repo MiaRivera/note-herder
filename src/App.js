@@ -110,7 +110,6 @@ class App extends Component {
 
   render() {
     const actions = {
-      resetCurrentNote: this.resetCurrentNote,
       saveNote: this.saveNote,
       deleteNote: this.deleteNote,
       signOut: this.signOut
