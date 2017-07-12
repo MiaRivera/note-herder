@@ -22,7 +22,6 @@ const Main = (props) => {
             />
             <NoteList 
                 notes={props.notes}
-                setCurrentNote={props.setCurrentNote}
             />
             <NoteForm 
                 notes={props.notes}
