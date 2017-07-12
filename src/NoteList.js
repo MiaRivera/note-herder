@@ -13,7 +13,6 @@ const NoteList = ({ notes}) => {
             <Note 
               note={notes[noteId]} 
               key={noteId} 
-              setCurrentNote={setCurrentNote}
             />
           )}
         </ul>

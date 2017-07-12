@@ -74,12 +74,12 @@ class App extends Component {
     }
   }
 
-  deleteNote = () => {
+  deleteNote = (note) => {
     const notes = {...this.state.notes}
-    notes[this.state.currentNoteId] = null
+    notes[note.id] = null
 
     this.setState({ notes })
-    this.resetCurrentNote()
+    this.props.history.push('/notes')
   }
 
   signedIn = () => {
